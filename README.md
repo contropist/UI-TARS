@@ -4,11 +4,15 @@
 
 # UI-TARS: Pioneering Automated GUI Interaction with Native Agents -->
 ![Local Image](figures/writer.png)
-<p align="center">
+<div align="center">
+<p>
         🌐 <a href="https://seed-tars.com/">Website</a>&nbsp&nbsp | 🤗 <a href="https://huggingface.co/ByteDance-Seed/UI-TARS-1.5-7B">Hugging Face Models</a>&nbsp&nbsp 
         | &nbsp&nbsp 🔧 <a href="README_deploy.md">Deployment</a> &nbsp&nbsp  | &nbsp&nbsp 📑 <a href="https://arxiv.org/abs/2501.12326">Paper</a> &nbsp&nbsp  |&nbsp&nbsp</a>
 🖥️ <a href="https://github.com/bytedance/UI-TARS-desktop">UI-TARS-desktop</a>&nbsp&nbsp  <br>🏄 <a href="https://github.com/web-infra-dev/Midscene">Midscene (Browser Automation) </a>&nbsp&nbsp | &nbsp&nbsp🫨 <a href="https://discord.gg/pTXwYVjfcs">Discord</a>&nbsp&nbsp
 </p>
+
+[![](https://trendshift.io/api/badge/repositories/13561)](https://trendshift.io/repositories/13561)
+</div>
 
 We also offer a **UI-TARS-desktop** version, which can operate on your **local personal device**. To use it, please visit [https://github.com/bytedance/UI-TARS-desktop](https://github.com/bytedance/UI-TARS-desktop). To use UI-TARS in web automation, you may refer to the open-source project [Midscene.js](https://github.com/web-infra-dev/Midscene).
 **❗Notes**: Since Qwen 2.5vl based models ultilizes absolute coordinates to ground objects, please kindly refer to our illustration about how to process coordinates in this <a href="README_coordinates.md">guide</a>.
@@ -48,14 +52,39 @@ This includes instructions for model deployment using huggingface endpoint, and 
 
 ### ✅ Step 2: Post Processing
 
-👉 <a href="codes/action_parser.py">Prediction Post-Processing</a>.
-This includes parsing model predictions to executable pyautogui codes.
-#### Coordinates processing
+#### Installation
+```bash
+pip install ui-tars
+# or
+uv pip install ui-tars
+```
+#### Usage
+```python
+from ui_tars.action_parser import parse_action_to_structure_output, parsing_response_to_pyautogui_code
+
+response = "Thought: Click the button\nAction: click(start_box='(100,200)')"
+original_image_width, original_image_height = 1920, 1080
+parsed_dict = parse_action_to_structure_output(
+    response,
+    factor=1000,
+    origin_resized_height=original_image_height,
+    origin_resized_width=original_image_width,
+    model_type="qwen25vl"
+)
+print(parsed_dict)
+parsed_pyautogui_code = parsing_response_to_pyautogui_code(
+    responses=parsed_dict,
+    image_height=original_image_height,
+    image_width=original_image_width
+)
+print(parsed_pyautogui_code)
+```
+##### FYI: Coordinates visualization
 To help you better understand the coordinate processing, we also provide a <a href="README_coordinates.md">guide</a> for coordinates processing visualization.
 
 ## Prompt Usage Guide
 
-To accommodate different device environments and task complexities, the following three prompt templates in <a href="codes/prompts.py">codes/prompts.py</a>. are designed to guide GUI agents in generating appropriate actions. Choose the template that best fits your use case:
+To accommodate different device environments and task complexities, the following three prompt templates in <a href="codes/ui_tars/prompt.py">codes/ui_tars/prompt.py</a>. are designed to guide GUI agents in generating appropriate actions. Choose the template that best fits your use case:
 
 ### 🖥️ `COMPUTER_USE`
 
